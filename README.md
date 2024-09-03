@@ -1,8 +1,9 @@
-# React + Vite
+Rick and Morty memory game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Inspired from theodinproject.com
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Welcome to my take on a memory game done in React. You're presented with 12
+cards, all different from each other. The goal is to not click on the same
+character twice. For each unique character you click you get one point. Clicking
+on a character you already clicked ends the game and you're presented with your
+score and the option to try again How high can you get?
