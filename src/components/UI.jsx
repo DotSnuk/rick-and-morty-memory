@@ -5,7 +5,6 @@ export function Grid() {
   for (let i = 0; i < tempCards; i += 1) {
     cards.push(<Card key={i} value={i} />);
   }
-
   return <div className='gamegrid'>{cards}</div>;
 }
 
