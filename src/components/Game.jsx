@@ -17,9 +17,15 @@ function getNewIds() {
   return idArray;
 }
 
+function isClicked(id, clickedCharacters) {
+  return clickedCharacters.includes(id);
+}
+
 export default function Game() {
   const [currentCardsId, setCurrentCardsId] = useState([...getNewIds()]);
+  const [clickedCharacters, setClickedCharacters] = useState([]);
 
+  // for testing
   useEffect(() => {
     const fetchData = async () => {
       const results = await getCharacters();
@@ -28,11 +34,15 @@ export default function Game() {
     fetchData();
   }, []);
 
-  console.log(currentCardsId);
+  const handleClick = id => {
+    setClickedCharacters(previous => [...previous, id]);
+    setCurrentCardsId([...getNewIds()]);
+    console.log(clickedCharacters);
+  };
 
   return (
     <>
-      <Grid />
+      <Grid IDs={currentCardsId} handleClick={handleClick} />
     </>
   );
 }

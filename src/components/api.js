@@ -10,4 +10,9 @@ export async function getMaxCharCount() {
   return data.info.count;
 }
 
-export async function getCharWithId(id) {}
+export async function getCharWithId(id) {
+  const data = await fetch(API_URL + `/${id}`).then(response =>
+    response.json(),
+  );
+  return data;
+}
