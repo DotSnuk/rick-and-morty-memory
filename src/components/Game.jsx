@@ -1,6 +1,6 @@
-import { Grid, Scoreboard } from './UI';
+import { Grid, Scoreboard, GameOver } from './UI';
 import { getCharacters, getMaxCharCount } from './api';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const MAX_CHARCOUNT = await getMaxCharCount();
 
@@ -20,6 +20,8 @@ function getNewIds() {
 export default function Game() {
   const [currentCardsId, setCurrentCardsId] = useState([...getNewIds()]);
   const [clickedCharacters, setClickedCharacters] = useState([]);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const highestScore = useRef(0);
 
   // for testing
   useEffect(() => {
@@ -34,18 +36,39 @@ export default function Game() {
     return clickedCharacters.includes(id);
   }
 
+  function gameOver() {
+    if (clickedCharacters.length > highestScore.current)
+      highestScore.current = clickedCharacters.length;
+    setIsGameOver(true);
+  }
+
   function handleClick(id) {
     if (!isClicked(id)) {
+      setClickedCharacters(previous => [...previous, id]);
+      setCurrentCardsId([...getNewIds()]);
+      return;
     }
-    setClickedCharacters(previous => [...previous, id]);
+    gameOver();
+  }
+
+  function handleNewGame() {
     setCurrentCardsId([...getNewIds()]);
-    console.log(clickedCharacters);
+    setClickedCharacters([]);
+    setIsGameOver(false);
   }
 
   return (
     <>
       <Scoreboard score={clickedCharacters.length} />
-      <Grid IDs={currentCardsId} handleClick={handleClick} />
+      {isGameOver ? (
+        <GameOver
+          score={clickedCharacters.length}
+          highestScore={highestScore.current}
+          newGame={handleNewGame}
+        />
+      ) : (
+        <Grid IDs={currentCardsId} handleClick={handleClick} />
+      )}
     </>
   );
 }

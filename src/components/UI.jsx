@@ -44,6 +44,18 @@ export function Card({ characterObject, handleClick }) {
   );
 }
 
+export function GameOver({ score, highestScore, newGame }) {
+  return (
+    <div>
+      Game over. Your current score was: {score} and your high score is:{' '}
+      {highestScore}
+      Would you like to start a new game?
+      <br />
+      <button onClick={newGame}>New Game</button>
+    </div>
+  );
+}
+
 export function Scoreboard({ score }) {
   return <header>{score}</header>;
 }
