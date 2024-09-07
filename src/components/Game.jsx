@@ -1,4 +1,4 @@
-import { Grid } from './UI';
+import { Grid, Scoreboard } from './UI';
 import { getCharacters, getMaxCharCount } from './api';
 import { useState, useEffect } from 'react';
 
@@ -17,10 +17,6 @@ function getNewIds() {
   return idArray;
 }
 
-function isClicked(id, clickedCharacters) {
-  return clickedCharacters.includes(id);
-}
-
 export default function Game() {
   const [currentCardsId, setCurrentCardsId] = useState([...getNewIds()]);
   const [clickedCharacters, setClickedCharacters] = useState([]);
@@ -34,14 +30,21 @@ export default function Game() {
     fetchData();
   }, []);
 
-  const handleClick = id => {
+  function isClicked(id) {
+    return clickedCharacters.includes(id);
+  }
+
+  function handleClick(id) {
+    if (!isClicked(id)) {
+    }
     setClickedCharacters(previous => [...previous, id]);
     setCurrentCardsId([...getNewIds()]);
     console.log(clickedCharacters);
-  };
+  }
 
   return (
     <>
+      <Scoreboard score={clickedCharacters.length} />
       <Grid IDs={currentCardsId} handleClick={handleClick} />
     </>
   );

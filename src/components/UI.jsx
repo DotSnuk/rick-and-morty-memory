@@ -43,3 +43,7 @@ export function Card({ characterObject, handleClick }) {
     </div>
   );
 }
+
+export function Scoreboard({ score }) {
+  return <header>{score}</header>;
+}
