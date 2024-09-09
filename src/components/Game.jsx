@@ -8,6 +8,15 @@ function getRandomId() {
   return Math.floor(Math.random() * MAX_CHARCOUNT + 1);
 }
 
+function getPreviousCardCount(highest) {
+  const min = getMin(highest);
+  return Math.floor(Math.random() * (highest - min) + min);
+}
+
+function getMin(highest) {
+  return Math.floor(highest / 2);
+}
+
 function getRandomIntWithHighest(highest) {
   return Math.floor(Math.random() * highest);
 }
@@ -23,15 +32,15 @@ function shuffleArray(arr) {
 function getNewIds(...preClicked) {
   const idArray = [];
   if (preClicked.length > 0) {
+    // Add some ID's that have been picked previously
     const highest = preClicked[0].length > 10 ? 10 : preClicked[0].length;
-    const randomAmount = getRandomIntWithHighest(highest);
+    const randomAmount = getPreviousCardCount(highest);
     const tempArr = [];
     while (tempArr.length < randomAmount) {
       const randomIndx = getRandomIntWithHighest(preClicked[0].length);
       if (!tempArr.includes(preClicked[0][randomIndx]))
         tempArr.push(preClicked[0][randomIndx]);
     }
-    console.log(tempArr);
     idArray.push(...tempArr);
   }
   while (idArray.length < 12) {
@@ -48,13 +57,12 @@ export default function Game() {
   const highestScore = useRef(0);
 
   // for testing
-  useEffect(() => {
-    const fetchData = async () => {
-      const results = await getCharacters();
-      console.log(results);
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const results = await getCharacters();
+  //   };
+  //   fetchData();
+  // }, []);
 
   function isClicked(id) {
     return clickedCharacters.includes(id);
