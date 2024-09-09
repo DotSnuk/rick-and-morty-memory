@@ -35,6 +35,10 @@ img {
   box-sizing: border-box;
 }
 
+.success {
+  border: 10px solid green;
+}
+
 .name {
   position: absolute;
   display: flex;

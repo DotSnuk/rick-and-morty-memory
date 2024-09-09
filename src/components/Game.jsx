@@ -55,6 +55,7 @@ export default function Game() {
   const [clickedCharacters, setClickedCharacters] = useState([]);
   const [isGameOver, setIsGameOver] = useState(false);
   const highestScore = useRef(0);
+  const hasClicked = useRef(false);
 
   // for testing
   // useEffect(() => {
@@ -74,13 +75,21 @@ export default function Game() {
     setIsGameOver(true);
   }
 
-  function handleClick(id) {
-    if (!isClicked(id)) {
-      setClickedCharacters(previous => [...previous, id]);
-      setCurrentCardsId([...getNewIds([...clickedCharacters])]);
-      return;
+  function handleClick(id, e, cardCallback) {
+    if (!hasClicked.current) {
+      if (!isClicked(id)) {
+        hasClicked.current = true;
+        cardCallback(e);
+        setTimeout(() => {
+          cardCallback(e);
+          hasClicked.current = false;
+          setClickedCharacters(previous => [...previous, id]);
+          setCurrentCardsId([...getNewIds([...clickedCharacters])]);
+        }, '1000');
+        return;
+      }
+      gameOver();
     }
-    gameOver();
   }
 
   function handleNewGame() {

@@ -33,11 +33,20 @@ export function Grid({ IDs, handleClick }) {
   return <div className='gamegrid'>{cards}</div>;
 }
 
+function toggleClass(elem) {
+  elem.classList.toggle('success');
+}
+
 export function Card({ characterObject, handleClick }) {
   const { id, image, name } = characterObject;
+
+  const cardClick = e => {
+    toggleClass(e.target.closest('.card'));
+  };
+
   return (
-    <div className='card'>
-      <img src={image} onClick={() => handleClick(id)} />
+    <div onClick={e => handleClick(id, e, cardClick)} className='card'>
+      <img src={image} />
       <div className='name'>{name}</div>
     </div>
   );
