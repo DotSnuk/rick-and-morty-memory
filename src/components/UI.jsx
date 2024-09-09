@@ -29,7 +29,6 @@ export function Grid({ IDs, handleClick }) {
     }
     asyncFunc(IDs);
   }, [IDs]);
-  console.log('render');
 
   return <div className='gamegrid'>{cards}</div>;
 }

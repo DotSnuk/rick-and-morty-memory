@@ -8,13 +8,37 @@ function getRandomId() {
   return Math.floor(Math.random() * MAX_CHARCOUNT + 1);
 }
 
-function getNewIds() {
+function getRandomIntWithHighest(highest) {
+  return Math.floor(Math.random() * highest);
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i >= 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function getNewIds(...preClicked) {
   const idArray = [];
+  if (preClicked.length > 0) {
+    const highest = preClicked[0].length > 10 ? 10 : preClicked[0].length;
+    const randomAmount = getRandomIntWithHighest(highest);
+    const tempArr = [];
+    while (tempArr.length < randomAmount) {
+      const randomIndx = getRandomIntWithHighest(preClicked[0].length);
+      if (!tempArr.includes(preClicked[0][randomIndx]))
+        tempArr.push(preClicked[0][randomIndx]);
+    }
+    console.log(tempArr);
+    idArray.push(...tempArr);
+  }
   while (idArray.length < 12) {
     const randomId = getRandomId();
     if (!idArray.includes(randomId)) idArray.push(randomId);
   }
-  return idArray;
+  return shuffleArray(idArray);
 }
 
 export default function Game() {
@@ -45,7 +69,7 @@ export default function Game() {
   function handleClick(id) {
     if (!isClicked(id)) {
       setClickedCharacters(previous => [...previous, id]);
-      setCurrentCardsId([...getNewIds()]);
+      setCurrentCardsId([...getNewIds([...clickedCharacters])]);
       return;
     }
     gameOver();
