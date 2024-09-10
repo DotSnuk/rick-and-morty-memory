@@ -1,5 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useRef, useMemo, useState } from 'react';
 import { getCharacters, getCharWithId } from './api';
+import png from '../assets/png.png';
+
+const loadingCards = getLoadingCards();
 
 export function Grid({ IDs, handleClick }) {
   const [characterObjects, setCharacterObjects] = useState([]);
@@ -30,11 +33,35 @@ export function Grid({ IDs, handleClick }) {
     asyncFunc(IDs);
   }, [IDs]);
 
-  return <div className='gamegrid'>{cards}</div>;
+  return (
+    <div className='gamegrid'>
+      {(cards.length === 0 && loadingCards) || cards}
+    </div>
+  );
+}
+
+function flipCards() {
+  // wait with flipping.. make it do something
+  // simple while you figure out the logic
+  // pick another image?
 }
 
 function toggleClass(elem) {
   elem.classList.toggle('success');
+}
+
+function getLoadingCards() {
+  const cardArray = [];
+  for (let i = 0; i < 12; i += 1) {
+    cardArray.push(<LoadingCard key={i} />);
+  }
+  return cardArray;
+}
+
+export function LoadingCard() {
+  return (
+    <div className='card load' style={{ background: `url(${png})` }}></div>
+  );
 }
 
 export function Card({ characterObject, handleClick }) {

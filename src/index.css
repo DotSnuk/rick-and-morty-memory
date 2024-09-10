@@ -31,12 +31,15 @@ body {
   transform: scale(1.04);
 }
 
+.card.flip {
+  background-color: black;
+}
+
 img {
   box-sizing: border-box;
 }
 
 .success {
-  border: 10px solid green;
 }
 
 .name {
