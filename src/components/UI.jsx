@@ -1,8 +1,20 @@
 import { useEffect, useRef, useMemo, useState } from 'react';
 import { getCharacters, getCharWithId } from './api';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import png from '../assets/png.png';
 
 const loadingCards = getLoadingCards();
+const duration = 300;
+const defaultStyle = {
+  transition: `opacity ${duration}ms ease-in-out`,
+  opacity: 0,
+};
+const transitionStyles = {
+  entering: { opacity: 1 },
+  entered: { opacity: 1 },
+  exiting: { opacity: 0 },
+  exited: { opacity: 0 },
+};
 
 export function Grid({ IDs, handleClick }) {
   const [characterObjects, setCharacterObjects] = useState([]);
@@ -35,7 +47,21 @@ export function Grid({ IDs, handleClick }) {
 
   return (
     <div className='gamegrid'>
-      {(cards.length === 0 && loadingCards) || cards}
+      {characterObjects.length > 0 && (
+        <TransitionGroup>
+          {characterObjects.map(char => {
+            return (
+              <CSSTransition key={char.id} timeout={300} classNames={'card'}>
+                <Card
+                  characterObject={char}
+                  key={char.id}
+                  handleClick={handleClick}
+                />
+              </CSSTransition>
+            );
+          })}
+        </TransitionGroup>
+      )}
     </div>
   );
 }
@@ -64,9 +90,25 @@ export function LoadingCard() {
   );
 }
 
-export function Card({ characterObject, handleClick }) {
-  const { id, image, name } = characterObject;
+function FadeCard({ characterObject, handleClick }) {
+  const nodeRef = useRef(null);
+  return (
+    <Transition nodeRef={nodeRef} timeout={duration}>
+      {state => (
+        <Card
+          ref={nodeRef}
+          style={{ ...defaultStyle, ...transitionStyles[state] }}
+          characterObject={characterObject}
+          handleClick={handleClick}
+        />
+      )}
+    </Transition>
+  );
+}
 
+export function Card({ characterObject, handleClick }) {
+  console.log(characterObject);
+  const { id, image, name } = characterObject;
   const cardClick = e => {
     toggleClass(e.target.closest('.card'));
   };
