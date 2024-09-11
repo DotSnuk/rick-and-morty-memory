@@ -78,6 +78,7 @@ export default function Game() {
   function handleClick(id, e, cardCallback) {
     if (!hasClicked.current) {
       if (!isClicked(id)) {
+        setCurrentCardsId([]);
         hasClicked.current = true;
         cardCallback(e);
         setTimeout(() => {

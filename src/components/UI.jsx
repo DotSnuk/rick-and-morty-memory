@@ -18,19 +18,6 @@ const transitionStyles = {
 
 export function Grid({ IDs, handleClick }) {
   const [characterObjects, setCharacterObjects] = useState([]);
-  const cards = useMemo(() => {
-    const cardArray = [];
-    for (let i = 0; i < characterObjects.length; i += 1) {
-      cardArray.push(
-        <Card
-          key={i}
-          characterObject={characterObjects[i]}
-          handleClick={handleClick}
-        />,
-      );
-    }
-    return cardArray;
-  }, [characterObjects]);
 
   useEffect(() => {
     async function asyncFunc(IDs) {
@@ -47,21 +34,19 @@ export function Grid({ IDs, handleClick }) {
 
   return (
     <div className='gamegrid'>
-      {characterObjects.length > 0 && (
-        <TransitionGroup>
-          {characterObjects.map(char => {
-            return (
-              <CSSTransition key={char.id} timeout={300} classNames={'card'}>
-                <Card
-                  characterObject={char}
-                  key={char.id}
-                  handleClick={handleClick}
-                />
-              </CSSTransition>
-            );
-          })}
-        </TransitionGroup>
-      )}
+      <TransitionGroup component={null}>
+        {characterObjects.map(char => {
+          return (
+            <CSSTransition key={char.id} timeout={300} classNames={'card'}>
+              <Card
+                key={char.id}
+                characterObject={char}
+                handleClick={handleClick}
+              />
+            </CSSTransition>
+          );
+        })}
+      </TransitionGroup>
     </div>
   );
 }
@@ -90,24 +75,23 @@ export function LoadingCard() {
   );
 }
 
-function FadeCard({ characterObject, handleClick }) {
-  const nodeRef = useRef(null);
-  return (
-    <Transition nodeRef={nodeRef} timeout={duration}>
-      {state => (
-        <Card
-          ref={nodeRef}
-          style={{ ...defaultStyle, ...transitionStyles[state] }}
-          characterObject={characterObject}
-          handleClick={handleClick}
-        />
-      )}
-    </Transition>
-  );
-}
+// function FadeCard({ characterObject, handleClick }) {
+//   const nodeRef = useRef(null);
+//   return (
+//     <Transition nodeRef={nodeRef} timeout={duration}>
+//       {state => (
+//         <Card
+//           ref={nodeRef}
+//           style={{ ...defaultStyle, ...transitionStyles[state] }}
+//           characterObject={characterObject}
+//           handleClick={handleClick}
+//         />
+//       )}
+//     </Transition>
+//   );
+// }
 
-export function Card({ characterObject, handleClick }) {
-  console.log(characterObject);
+export function Card({ characterObject, handleClick, clickCb }) {
   const { id, image, name } = characterObject;
   const cardClick = e => {
     toggleClass(e.target.closest('.card'));
