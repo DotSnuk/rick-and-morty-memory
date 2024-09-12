@@ -1,3 +1,4 @@
+import { createRef } from 'react';
 const API_URL = 'https://rickandmortyapi.com/api/character';
 
 export async function getCharacters() {
