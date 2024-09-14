@@ -1,64 +1,50 @@
-import {
-  useEffect,
-  useRef,
-  useMemo,
-  useState,
-  createRef,
-  forwardRef,
-} from 'react';
+import { useEffect, useState, createRef, forwardRef } from 'react';
 import { getCharacters, getCharWithId } from './api';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import png from '../assets/png.png';
 
-const loadingCards = getLoadingCards();
-const duration = 300;
-const defaultStyle = {
-  transition: `opacity ${duration}ms ease-in-out`,
-  opacity: 0,
-};
-const transitionStyles = {
-  entering: { opacity: 1 },
-  entered: { opacity: 1 },
-  exiting: { opacity: 0 },
-  exited: { opacity: 0 },
-};
+const EMPTY_CARDARRAY = getEmptyCardArray();
 
 export function Grid({ IDs, handleClick }) {
-  const [characterObjects, setCharacterObjects] = useState([]);
+  const [cardData, setCardData] = useState([]);
+
+  const updateCards = (...data) => {
+    if (data.length > 0) {
+      const cardArray = [];
+      for (let i = 0; i < data[0].length; i += 1) {
+        cardArray.push({ front: data[0][i], back: png, index: i });
+      }
+      setCardData(cardArray);
+      return;
+    }
+    setCardData(EMPTY_CARDARRAY);
+  };
 
   useEffect(() => {
     async function asyncFunc(IDs) {
-      await Promise.all(
-        IDs.map(async id => {
-          const char = await getCharWithId(id);
-          return { ...char, nodeRef: createRef(null) };
-        }),
-      ).then(d => {
-        setCharacterObjects(d);
+      await Promise.all(IDs.map(async id => getCharWithId(id))).then(d => {
+        updateCards(d);
       });
     }
     asyncFunc(IDs);
   }, [IDs]);
 
-  console.log(characterObjects);
-
   return (
     <div className='gamegrid'>
       <TransitionGroup component={null}>
-        {characterObjects.map(char => {
+        {cardData.map(card => {
           const nodeRef = createRef(null);
           return (
             <CSSTransition
               nodeRef={nodeRef}
-              key={char.id}
-              timeout={300}
+              key={card.index}
+              timeout={800}
               classNames={'card'}
             >
               <Card
                 ref={nodeRef}
-                props={{ char, handleClick }}
-                key={char.id}
-                characterObject={char}
+                key={card.index}
+                cardData={card}
                 handleClick={handleClick}
               />
             </CSSTransition>
@@ -79,6 +65,14 @@ function toggleClass(elem) {
   elem.classList.toggle('success');
 }
 
+function getEmptyCardArray() {
+  const cardArray = [];
+  for (let i = 0; i < 12; i += 1) {
+    cardArray.push({ front: null, back: png, index: i });
+  }
+  return cardArray;
+}
+
 function getLoadingCards() {
   const cardArray = [];
   for (let i = 0; i < 12; i += 1) {
@@ -93,55 +87,29 @@ export function LoadingCard() {
   );
 }
 
-// function FadeCard({ characterObject, handleClick }) {
-//   const nodeRef = useRef(null);
-//   return (
-//     <Transition nodeRef={nodeRef} timeout={duration}>
-//       {state => (
-//         <Card
-//           ref={nodeRef}
-//           style={{ ...defaultStyle, ...transitionStyles[state] }}
-//           characterObject={characterObject}
-//           handleClick={handleClick}
-//         />
-//       )}
-//     </Transition>
-//   );
-// }
-
 const Card = forwardRef(function Card(props, ref) {
-  const { id, image, name } = props.characterObject;
+  const { front, back } = props.cardData;
   const cardClick = e => {
     toggleClass(e.target.closest('.card'));
   };
+  const frontNull = front === null;
 
   return (
     <div
       ref={ref}
-      onClick={e => props.handleClick(id, e, cardClick)}
+      onClick={e => props.handleClick(front.id, e, cardClick)}
       className='card'
     >
-      <img src={image} />
-      <div className='name'>{name}</div>
+      <div className='front'>
+        <img src={front.image} />
+        <div className='name'>{front.name}</div>
+      </div>
+      <div className='back'>
+        <img src={back} />
+      </div>
     </div>
   );
 });
-
-// Card.displayName = 'Card';
-
-// export function Card({ characterObject, handleClick }) {
-//   const { id, image, name } = characterObject;
-//   const cardClick = e => {
-//     toggleClass(e.target.closest('.card'));
-//   };
-
-//   return (
-//     <div onClick={e => handleClick(id, e, cardClick)} className='card'>
-//       <img src={image} />
-//       <div className='name'>{name}</div>
-//     </div>
-//   );
-// }
 
 export function GameOver({ score, highestScore, newGame }) {
   return (
