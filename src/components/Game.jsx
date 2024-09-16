@@ -1,6 +1,7 @@
 import { Grid, Scoreboard, GameOver } from './UI';
 import { getCharacters, getMaxCharCount } from './api';
 import { useState, useEffect, useRef } from 'react';
+import png from '../assets/png.png';
 
 const MAX_CHARCOUNT = await getMaxCharCount();
 
@@ -50,20 +51,20 @@ function getNewIds(...preClicked) {
   return shuffleArray(idArray);
 }
 
+function resetCards() {
+  const cardArray = [];
+  for (let i = 0; i < 12; i += 1) {
+    cardArray.push({ characterId: null, backImage: png });
+  }
+  return cardArray;
+}
+
 export default function Game() {
   const [currentCardsId, setCurrentCardsId] = useState([...getNewIds()]);
   const [clickedCharacters, setClickedCharacters] = useState([]);
   const [isGameOver, setIsGameOver] = useState(false);
   const highestScore = useRef(0);
   const hasClicked = useRef(false);
-
-  // for testing
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const results = await getCharacters();
-  //   };
-  //   fetchData();
-  // }, []);
 
   function isClicked(id) {
     return clickedCharacters.includes(id);
@@ -75,18 +76,17 @@ export default function Game() {
     setIsGameOver(true);
   }
 
-  function handleClick(id, e, cardCallback) {
+  function handleClick(id, cardCallback) {
     if (!hasClicked.current) {
       if (!isClicked(id)) {
-        setCurrentCardsId([]);
+        // setCurrentCardsId([]);
         hasClicked.current = true;
-        cardCallback(e);
+        cardCallback();
         setTimeout(() => {
-          cardCallback(e);
           hasClicked.current = false;
           setClickedCharacters(previous => [...previous, id]);
           setCurrentCardsId([...getNewIds([...clickedCharacters])]);
-        }, '1000');
+        }, '800');
         return;
       }
       gameOver();
