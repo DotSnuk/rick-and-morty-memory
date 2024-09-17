@@ -1,29 +1,23 @@
 import { useEffect, useState, createRef, forwardRef, useRef } from 'react';
 import { getCharacters, getCharWithId } from './api';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import png from '../assets/png.png';
-
-const EMPTY_CARDARRAY = getEmptyCardArray();
+import backImage from '../assets/back.jpg';
 
 export function Grid({ IDs, handleClick }) {
   const [cardData, setCardData] = useState([]);
-  const [isRotated, setIsRotated] = useState(false);
+  const [isRotated, setIsRotated] = useState(true); //react strict mode triggers rotation (I think). should be false
 
-  const updateCards = (...data) => {
-    if (data.length > 0) {
-      const cardArray = [];
-      for (let i = 0; i < data[0].length; i += 1) {
-        cardArray.push({
-          front: data[0][i],
-          back: png,
-          index: i,
-        });
-      }
-      setCardData(cardArray);
-      toggleRotate();
-      return;
+  const updateCards = data => {
+    const cardArray = [];
+    for (let i = 0; i < data.length; i += 1) {
+      cardArray.push({
+        front: data[i],
+        back: backImage,
+        index: i,
+      });
     }
-    setCardData(EMPTY_CARDARRAY);
+    setCardData(cardArray);
+    toggleRotate();
   };
 
   const toggleRotate = () => {
@@ -53,14 +47,6 @@ export function Grid({ IDs, handleClick }) {
       ))}
     </div>
   );
-}
-
-function getEmptyCardArray() {
-  const cardArray = [];
-  for (let i = 0; i < 12; i += 1) {
-    cardArray.push({ front: null, back: png, isRotated: true, index: i });
-  }
-  return cardArray;
 }
 
 function Card(props) {
